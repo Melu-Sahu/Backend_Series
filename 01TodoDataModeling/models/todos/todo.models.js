@@ -6,7 +6,7 @@ const todoSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        isComplete : {
+        isComplete: {
             type: Boolean,
             default: false,
         },
@@ -17,9 +17,9 @@ const todoSchema = new mongoose.Schema(
         subTodos: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref:"SubTodo"
+                ref: "SubTodo"
             }
         ]
-    },{timestamps: true});
+    }, { timestamps: true });
 
 export const Todo = mongoose.model("Todo", todoSchema);
