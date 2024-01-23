@@ -15,7 +15,6 @@ const orderItemsSchema = new mongoose.Schema({
 
 
 
-
 const orderSchema = new mongoose.Schema(
     {
         orderPrice: {
@@ -32,6 +31,11 @@ const orderSchema = new mongoose.Schema(
         address: {
             type: String,
             required: true
+        },
+        status: {
+            type: String,
+            enum: ["PENDING", "CANCILED", "DELIEVERED"],
+            default: "PENDING"
         }
     },{timestamps: true});
 
