@@ -1,0 +1,19 @@
+{
+  "name": "03professionaljourney",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A backend in at Chai aur code channel",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "Javascript",
+    "Backend"
+  ],
+  "author": "Melu-Sahu",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
