@@ -1,16 +1,17 @@
 // require('dotenv').config({path: './env'});
 
 import dotenv from "dotenv";
-
-// import mongoose from "mongoose";
-// import { DB_NAME } from "./constants";
-import express from "express";
-import connectDB from "./db/index.js";
-import { app } from "./app.js";
-
 dotenv.config({
   path: "./env",
 });
+
+
+// import mongoose from "mongoose";
+// import { DB_NAME } from "./constants";
+import connectDB from "./db/index.js";
+import { app } from "./app.js";
+
+
 
 connectDB()
   .then(() => {
@@ -24,8 +25,6 @@ connectDB()
   .catch((error) => {
     console.log("MOngodb Connection Failed!!", error);
   });
-
-const app = express();
 
 /* First Approach */
 
