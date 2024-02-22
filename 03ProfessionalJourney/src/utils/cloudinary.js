@@ -22,6 +22,7 @@ const uploadOnCloudinary = async (localFilePath) => {
       "File uploaded using Cloudinary service on cloudinary",
       response
     );
+    //fs.unlinkSync(localFilePath); // remove the locally saved temperory file as the upload operation got successful for cleaning of server.
     return response;
   } catch (error) {
     fs.unlinkSync(localFilePath); // remove the locally saved temperyry file as the upload operation got failed.
