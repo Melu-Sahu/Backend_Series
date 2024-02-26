@@ -18,11 +18,11 @@ const uploadOnCloudinary = async (localFilePath) => {
       resource_type: "auto",
     });
     //file uploaded successfully
-    console.log(
-      "File uploaded using Cloudinary service on cloudinary",
-      response
-    );
-    //fs.unlinkSync(localFilePath); // remove the locally saved temperory file as the upload operation got successful for cleaning of server.
+    // console.log(
+    //   "File uploaded using Cloudinary service on cloudinary",
+    //   response.url
+    // );
+    fs.unlinkSync(localFilePath); // remove the locally saved temperory file as the upload operation got successful for cleaning of server.
     return response;
   } catch (error) {
     fs.unlinkSync(localFilePath); // remove the locally saved temperyry file as the upload operation got failed.

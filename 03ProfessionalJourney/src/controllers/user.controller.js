@@ -17,11 +17,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { fullname, email, password, username } = req.body;
 
-  console.log(fullname, email, password);
+  // console.log(fullname, email, password, username);
 
-  //   if (fullname === "") {
-  //     throw new ApiError(400, "fullname is required.");
-  //   }
+  /* Validation */
+
+  // if (fullname === "") {
+  //   throw new ApiError(400, "fullname is required.");
+  // }
 
   if (
     [fullname, email, password, username].some((field) => field?.trim() === "")
@@ -30,7 +32,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // getting user detail from database
-  const existedUser = User.findOne({
+  const existedUser = await User.findOne({
     $or: [{ email }, { username }],
   });
   // If user exists, this will throw error
@@ -39,7 +41,16 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const avitarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length() > 0
+  ) {
+    coverImageLocalPath = req.files.coverImage[0].path;
+  }
 
   if (!avitarLocalPath) {
     throw new ApiError(400, "Avatar file is required.");
@@ -48,8 +59,9 @@ const registerUser = asyncHandler(async (req, res) => {
   const avatar = await uploadOnCloudinary(avitarLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
-  if (avatar) {
-    throw new ApiError(400, "Avatar file is required.");
+  // console.log("avatar", avatar);
+  if (!avatar) {
+    throw new ApiError(400, "Avatar file is required. Please try again.");
   }
 
   const user = await User.create({
@@ -58,7 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
     coverImage: coverImage?.url || "",
     email,
     password,
-    username: username.toLoverCase(),
+    username,
   });
 
   const createdUser = await User.findById(user._id).select(
@@ -69,10 +81,9 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something wents wrong while registering the user");
   }
 
-  return res.status(201).json(
-    new ApiResponse(200, createdUser, "User registered successfully.")
-  )
-
+  return res
+    .status(201)
+    .json(new ApiResponse(200, createdUser, "User registered successfully."));
 });
 
 export { registerUser };
