@@ -40,23 +40,23 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exists!");
   }
 
+  console.log("Request", req.files);
   const avitarLocalPath = req.files?.avatar[0]?.path;
-  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  if (!avitarLocalPath) {
+    throw new ApiError(400, "Avatar file is required.");
+  }
+  const avatar = await uploadOnCloudinary(avitarLocalPath);
 
   let coverImageLocalPath;
   if (
     req.files &&
     Array.isArray(req.files.coverImage) &&
-    req.files.coverImage.length() > 0
+    req.files.coverImage.length > 0
   ) {
     coverImageLocalPath = req.files.coverImage[0].path;
+    console.log("Cover Image", coverImageLocalPath);
   }
 
-  if (!avitarLocalPath) {
-    throw new ApiError(400, "Avatar file is required.");
-  }
-
-  const avatar = await uploadOnCloudinary(avitarLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   // console.log("avatar", avatar);
@@ -72,6 +72,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     username,
   });
+  console.log("USER", user);
 
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
@@ -86,4 +87,34 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User registered successfully."));
 });
 
-export { registerUser };
+const loginuser = asyncHandler(async (req, res) => {
+  // get users details from frontend
+  const { email, username, password } = req.body;
+  // validate that they are not empty
+
+  if (!username || !email) {
+    throw new ApiError(400, "username or email is required.");
+  }
+
+  // check if user exits or not
+  const user = await User.findOne({ $or: [{ email }, { username }] });
+
+  // if not then err message.
+  if (!user) {
+    throw new ApiError(404, "User does not exits!");
+  }
+
+  // if exists then check password
+  const passwordValid = await user.isPasswordCorrect(password);
+
+  // if password not correct then throw error
+  if(!passwordValid){
+    throw new ApiError(401, "Invalid Password.");
+  }
+
+  // if password correct then generate access & refresh tokens
+  // send to user. cookies
+  // response successful login.
+});
+
+export { registerUser, loginuser };
